@@ -51,6 +51,10 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
+					"expression": {
+						"value": "@greater(activity('countcheck').output.value[0].REC_COUNT,0)",
+						"type": "Expression"
+					},
 					"ifTrueActivities": [
 						{
 							"name": "SQL SERVER_copy1",
@@ -139,7 +143,7 @@
 							}
 						},
 						{
-							"name": "MAX_CDC_COL_copy1",
+							"name": "MAX_CDC_COL",
 							"type": "Script",
 							"dependsOn": [
 								{
@@ -179,7 +183,7 @@
 							"type": "Copy",
 							"dependsOn": [
 								{
-									"activity": "MAX_CDC_COL_copy1",
+									"activity": "MAX_CDC_COL",
 									"dependencyConditions": [
 										"Succeeded"
 									]
