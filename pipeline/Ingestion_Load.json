@@ -41,6 +41,8 @@
 			{
 				"name": "If Condition1",
 				"type": "IfCondition",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "countcheck",
@@ -79,7 +81,7 @@
 								"source": {
 									"type": "AzureSqlSource",
 									"sqlReaderQuery": {
-										"value": "SELECT * FROM @{pipeline().parameters.Schema}.@{pipeline().parameters.table} WHERE @{pipeline().parameters.cdc_column} > '@{if(empty(pipeline().parameters.from_date),activity('Lookup1').output.value[0].cdc,pipeline().parameters.from_date)}'",
+										"value": "SELECT * FROM @{pipeline().parameters.Schema}.@{pipeline().parameters.table} WHERE @{pipeline().parameters.cdc_column} > @{variables('current')}",
 										"type": "Expression"
 									},
 									"queryTimeout": "02:00:00",
@@ -260,7 +262,7 @@
 				"type": "Lookup",
 				"dependsOn": [
 					{
-						"activity": "Lookup1",
+						"activity": "Assign_value",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -278,7 +280,7 @@
 					"source": {
 						"type": "AzureSqlSource",
 						"sqlReaderQuery": {
-							"value": "SELECT COUNT(*) AS REC_COUNT FROM @{pipeline().parameters.Schema}.@{pipeline().parameters.table} WHERE @{pipeline().parameters.cdc_column} > '@{activity('Lookup1').output.value[0].cdc}'",
+							"value": "SELECT COUNT(*) AS REC_COUNT FROM @{pipeline().parameters.Schema}.@{pipeline().parameters.table} WHERE @{pipeline().parameters.cdc_column} > @{variables('current')}",
 							"type": "Expression"
 						},
 						"queryTimeout": "02:00:00",
@@ -289,6 +291,30 @@
 						"type": "DatasetReference"
 					},
 					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Assign_value",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Lookup1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "current",
+					"value": {
+						"value": "'@{if(empty(pipeline().parameters.from_date),activity('Lookup1').output.value[0].cdc,pipeline().parameters.from_date)}'",
+						"type": "Expression"
+					}
 				}
 			}
 		],
