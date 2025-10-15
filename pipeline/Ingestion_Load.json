@@ -31,7 +31,10 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"container": "bronze",
-							"folder": "CDC",
+							"folder": {
+								"value": "@{pipeline().parameters.table}_CDC",
+								"type": "Expression"
+							},
 							"file": "cdc.json"
 						}
 					},
@@ -41,8 +44,6 @@
 			{
 				"name": "If Condition1",
 				"type": "IfCondition",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "countcheck",
@@ -120,7 +121,7 @@
 										"container": "bronze",
 										"folder": "user",
 										"file": {
-											"value": "@concat(pipeline().parameters.table,'_',variables('current'))",
+											"value": "@concat(pipeline().parameters.table,'_',variables('Timestamp'))",
 											"type": "Expression"
 										}
 									}
@@ -137,7 +138,7 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"variableName": "current",
+								"variableName": "Timestamp",
 								"value": {
 									"value": "@utcNow()",
 									"type": "Expression"
@@ -237,7 +238,10 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"container": "bronze",
-										"folder": "CDC",
+										"folder": {
+											"value": "@{pipeline().parameters.table}_CDC",
+											"type": "Expression"
+										},
 										"file": "empty.json"
 									}
 								}
@@ -248,7 +252,10 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"container": "bronze",
-										"folder": "CDC",
+										"folder": {
+											"value": "@{pipeline().parameters.table}_CDC",
+											"type": "Expression"
+										},
 										"file": "cdc.json"
 									}
 								}
@@ -312,7 +319,7 @@
 				"typeProperties": {
 					"variableName": "current",
 					"value": {
-						"value": "'@{if(empty(pipeline().parameters.from_date),activity('Lookup1').output.value[0].cdc,pipeline().parameters.from_date)}'",
+						"value": "@{if(empty(pipeline().parameters.from_date),activity('Lookup1').output.value[0].cdc,pipeline().parameters.from_date)}",
 						"type": "Expression"
 					}
 				}
@@ -334,6 +341,9 @@
 		},
 		"variables": {
 			"current": {
+				"type": "String"
+			},
+			"Timestamp": {
 				"type": "String"
 			}
 		},
