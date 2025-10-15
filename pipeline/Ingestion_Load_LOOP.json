@@ -8,6 +8,11 @@
 				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
+					"items": {
+						"value": "@pipeline().parameters.loop_input",
+						"type": "Expression"
+					},
+					"isSequential": true,
 					"activities": [
 						{
 							"name": "Lookup1",
@@ -67,7 +72,7 @@
 								},
 								"ifTrueActivities": [
 									{
-										"name": "SQL SERVER_copy",
+										"name": "SQL SERVER",
 										"type": "Copy",
 										"dependsOn": [
 											{
@@ -156,11 +161,11 @@
 										}
 									},
 									{
-										"name": "MAX_CDC_COL_copy1",
+										"name": "MAX_CDC_COL",
 										"type": "Script",
 										"dependsOn": [
 											{
-												"activity": "SQL SERVER_copy",
+												"activity": "SQL SERVER",
 												"dependencyConditions": [
 													"Succeeded"
 												]
@@ -192,11 +197,11 @@
 										}
 									},
 									{
-										"name": "copy_json_copy1_copy1",
+										"name": "copy_json",
 										"type": "Copy",
 										"dependsOn": [
 											{
-												"activity": "MAX_CDC_COL_copy1",
+												"activity": "MAX_CDC_COL",
 												"dependencyConditions": [
 													"Succeeded"
 												]
@@ -345,31 +350,31 @@
 					{
 						"schema": "dbo",
 						"table": "DimUser",
-						"cdc_col": "updated_at",
+						"cdc_column": "updated_at",
 						"from_date": ""
 					},
 					{
 						"schema": "dbo",
 						"table": "DimTrack",
-						"cdc_col": "updated_at",
+						"cdc_column": "updated_at",
 						"from_date": ""
 					},
 					{
 						"schema": "dbo",
 						"table": "DimDate",
-						"cdc_col": "date",
+						"cdc_column": "date",
 						"from_date": ""
 					},
 					{
 						"schema": "dbo",
 						"table": "DimArtist",
-						"cdc_col": "updated_at",
+						"cdc_column": "updated_at",
 						"from_date": ""
 					},
 					{
 						"schema": "dbo",
 						"table": "FactStream",
-						"cdc_col": "stream_timestamp",
+						"cdc_column": "stream_timestamp",
 						"from_date": ""
 					}
 				]
